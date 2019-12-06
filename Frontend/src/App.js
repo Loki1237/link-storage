@@ -198,12 +198,12 @@ function mapDispatchToProps( dispatch ) {
     open_my_links: () => dispatch( open_my_links ),
     open_aut_bar: () => dispatch( open_aut_bar ),
     authorization: ownProps => dispatch( authorization( ownProps ) ),
+    set_language: ownProps => dispatch( set_language( ownProps ) ),
     close_all_components: function() {
       dispatch({
         type: "CLOSE_ALL_COMPONENTS"
       })
     },
-    set_language: ownProps => dispatch( set_language( ownProps ) ),
     exit: function() {
       dispatch({
         type: "EXIT"
