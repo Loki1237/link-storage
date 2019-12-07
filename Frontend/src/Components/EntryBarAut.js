@@ -131,13 +131,6 @@ class EntryBarAut extends React.Component {
             {/* name */ this.props.elementNames.EntryBar.buttonRegistration}
           </button>
 
-          <button className="EB-button" style={{width: "50px"}}
-            onClick={ () => {
-              this.setState({ login: "mr_randolf", password: "12345678" })
-            } }>
-            Enter
-          </button>
-
           <button className="EB-button"
             onClick={ this.entry.bind(this) }>
             {/* name */ this.props.elementNames.EntryBar.buttonAuthorization}
