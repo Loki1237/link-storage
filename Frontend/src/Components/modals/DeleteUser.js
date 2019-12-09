@@ -15,39 +15,27 @@ class DeleteUser extends React.Component {
   }
 
   deleteUser(id) {
-    let user = {
-      id
-    }
     fetch("/api/users", {
       method: 'DELETE',
       headers: {
         'Content-Type': 'application/json;charset=utf-8'
       },
-      body: JSON.stringify(user)
+      body: JSON.stringify({
+        id
+      })
     }).then(
-      result => {
-        this.props.closeUserMenu();
-        fetch("/api/links")
-          .then( res => res.json() )
-          .then( links => {
-            for( let i = 0; i < links.length; i++ ) {
-              if( links[i].userID === id ) {
-                let link = {
-                  userID: id,
-                  id: links[i].id
-                }
-                fetch("/api/links", {
-                  method: 'DELETE',
-                  headers: {
-                    'Content-Type': 'application/json;charset=utf-8'
-                  },
-                  body: JSON.stringify(link)
-                })
-              }
-            }
+      res => {
+        fetch('/api/links/userID', {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json;charset=utf-8"
+          },
+          body: JSON.stringify({
+            userID: id
           })
+        })
       },
-      error => alert("Error")
+      err => alert("Error")
     )
   }
   

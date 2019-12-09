@@ -38,7 +38,7 @@ class ShowHiddens extends React.Component {
 
           <input type="text" 
             className="Modal-input"
-            maxlength="4"
+            maxLength="4"
             autoFocus
             value={ this.state.PINcode }
             onChange={ (e) => {
