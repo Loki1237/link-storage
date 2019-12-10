@@ -62,19 +62,18 @@ class MyLinks extends React.Component {
   }
 
   deleteLink( id, userID ) {
-    let link = {
-      userID,
-      id
-    }
-    fetch('/api/links', {
+    etch('/api/links', {
       method: 'DELETE',
       headers: {
         'Content-Type': 'application/json;charset=utf-8'
       },
-      body: JSON.stringify(link)
+      body: JSON.stringify({
+        userID,
+        id
+      })
     }).then(
-      result => this.createList(),
-      error => alert("Error")
+      res => this.createList(),
+      err => alert( err )
     )
   }
    

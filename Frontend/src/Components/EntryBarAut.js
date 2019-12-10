@@ -32,18 +32,11 @@ class EntryBarAut extends React.Component {
     if(!this.state.password && this.state.login) this.highlighting( "password" )
 
     if( this.state.login && this.state.password ) {
-      fetch("api/users")
+      fetch(`api/users/${this.state.login}`)
         .then( res => res.json() )
         .then( 
-          users => {
-            let user = null;
-            for(let i = 0; i < users.length; i++) {
-              if( this.state.login === users[i].login && this.state.password === users[i].password ) {
-                user = users[i]
-                break;
-              }
-            }
-            if( user ) {
+          user => {
+            if( user && this.state.password === user.password  ) {
               document.cookie = "isAuthorized=true; max-age=31536000";
               document.cookie = `login=${user.login}; max-age=31536000`;
               document.cookie = `password=${user.password}; max-age=31536000`;

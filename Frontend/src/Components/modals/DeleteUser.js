@@ -25,14 +25,11 @@ class DeleteUser extends React.Component {
       })
     }).then(
       res => {
-        fetch('/api/links/userID', {
+        fetch(`/api/links/${id}`, {
           method: "DELETE",
           headers: {
             "Content-Type": "application/json;charset=utf-8"
-          },
-          body: JSON.stringify({
-            userID: id
-          })
+          }
         })
       },
       err => alert("Error")

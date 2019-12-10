@@ -40,11 +40,22 @@ sequelize.sync().then(
   error => console.log(error)
 );
 
-router.get('/', function(req, res, next) {
+router.get('/', function(req, res) {
   User.findAll({
     raw: true
   }).then(
     users => res.json(users),
+    error => console.log(error)
+  )
+});
+
+router.get('/:login', function(req, res) {
+  User.findOne({
+    where: {
+      login: req.params.login
+    }
+  }).then(
+    user => res.json(user),
     error => console.log(error)
   )
 });

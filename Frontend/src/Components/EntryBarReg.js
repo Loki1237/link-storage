@@ -6,10 +6,10 @@ class EntryBarReg extends React.Component {
     super(props);
     this.state = {
       showPassword: false,
-      name: null,
-      login: null,
-      password: null,
-      PINcode: null,
+      name: "",
+      login: "",
+      password: "",
+      PINcode: "",
       highlighting: {
         name: false,
         login: false,
@@ -52,7 +52,7 @@ class EntryBarReg extends React.Component {
         return false
       }
     }
-    if( isFinite(this.state.login) ) return false
+    if( isFinite(this.state.login[0]) ) return false
     return true
   }
 
@@ -117,52 +117,42 @@ class EntryBarReg extends React.Component {
         this.state.password.length >= 6 && this.state.PINcode.length === 4 && isFinite(this.state.PINcode) ) {
       let uniqueUser = false;
 
-      fetch("/api/users")
+      fetch(`api/users/${this.state.login}`)
         .then( res => res.json() )
-        .then( users => {
-          for( let i = 0; i < users.length; i++ ) {
-            if( this.state.login === users[i].login ) {
-              uniqueUser = false;
-              this.setState({ loginError: true });
-              break;
-            } else {
-              uniqueUser = true;
-            }
+        .then( user => {
+          if( user ) {
+            this.setState({ loginError: true });
+          } 
+          if( user === null ) {
+            this.setState({ confirmRegistration: true })
           }
-          if( uniqueUser ) this.setState({ confirmRegistration: true })
-        } )
+        })
         .catch( error => this.setState({ serverError: true }) )
       }
   }
 
   registration() {
-    fetch("/api/users")
-      .then( res => res.json() )
-      .then( users => {
-        let user = {
-          id: null,
-          name: this.state.name,
-          login: this.state.login,
-          password: this.state.password,
-          PINcode: this.state.PINcode
-        }
-
-        fetch('/api/users', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json;charset=utf-8'
-          },
-          body: JSON.stringify(user)
-        }).then(
-          result => {
-            this.setState({ 
-              confirmRegistration: false, 
-              successfulRegistration: true 
-            })
-          },
-          error => alert( "Error" )
-        )
-    } )
+    fetch('/api/users', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json;charset=utf-8'
+      },
+      body: JSON.stringify({
+        id: null,
+        name: this.state.name,
+        login: this.state.login,
+        password: this.state.password,
+        PINcode: this.state.PINcode
+      })
+    }).then(
+      res => {
+        this.setState({ 
+          confirmRegistration: false, 
+          successfulRegistration: true 
+        })
+      },
+      err => alert( err )
+    )
   }
 
   render() {
@@ -199,6 +189,7 @@ class EntryBarReg extends React.Component {
             autoFocus
             className={`EB-input 
               ${this.state.highlighting.name ? "EB-alert" : ""}`}
+            value={this.state.name}
             onChange={ (e) => {
               this.setState({ name: e.target.value })
             } } />
@@ -217,6 +208,7 @@ class EntryBarReg extends React.Component {
             autoComplete="off"
             className={`EB-input 
               ${this.state.highlighting.login ? "EB-alert" : ""}`}
+            value={this.state.login}
             onChange={ (e) => {
               this.setState({ login: e.target.value })
             } } />
@@ -236,6 +228,7 @@ class EntryBarReg extends React.Component {
             maxLength="12"
             className={`EB-input 
               ${this.state.highlighting.password ? "EB-alert" : ""}`}
+            value={this.state.password}
             onChange={ (e) => {
               this.setState({ password: e.target.value })
             } } />
@@ -267,6 +260,7 @@ class EntryBarReg extends React.Component {
             maxLength="4"
             className={`EB-input 
               ${this.state.highlighting.PINcode ? "EB-alert" : ""}`}
+            value={this.state.PINcode}
             onChange={ (e) => {
               this.setState({ PINcode: e.target.value })
             } } />

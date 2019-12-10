@@ -84,11 +84,10 @@ router.delete('/', function(req, res) {
   res.sendStatus(200);
 });
 
-router.delete('/userID', function(req, res) {
-  let link = req.body;
+router.delete('/:userID', function(req, res) {
   Link.destroy({
     where: {
-      userID: link.userID
+      userID: req.params.userID
     }
   })
   res.sendStatus(200);
