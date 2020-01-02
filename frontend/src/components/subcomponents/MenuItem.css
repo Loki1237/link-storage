@@ -1,0 +1,12 @@
+.dropdown-item {
+    cursor: pointer;
+    height: 20%;
+    font: 13px arial;
+    white-space: nowrap;
+    padding: 4px 12px 0 2px;
+    color: #222;
+    transition: all 0.05s linear;
+}
+.dropdown-item:hover {
+    background: #DDD;
+}

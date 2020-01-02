@@ -1,0 +1,9 @@
+.body-app {
+    overflow: auto;
+    width: 100%;
+    height: calc(100% - 35px);
+    background: #EEE;
+    position: fixed;
+    left: 0;
+    top: 35px;
+}

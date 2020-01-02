@@ -1,0 +1,14 @@
+.LanguageSwitch {
+    position: absolute;
+    bottom: 24px;
+    right: 48px;
+}
+.lang-item {
+    cursor: pointer;
+    font: 13px arial;
+    color: #066;
+    margin: 0 8px;
+}
+.lang-item:hover {
+    color: #4AA;
+}

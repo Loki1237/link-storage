@@ -1,0 +1,46 @@
+.Message {
+    width: 340px;
+    border: solid 1px #AAA;
+    border-radius: 4px;
+    position: absolute;
+    margin: auto;
+    left: 0;
+    right: 0;
+    bottom: 30px;
+    z-index: 2;
+    padding: 12px;
+    cursor: default;
+    animation: show-message 0.1s 1 linear;
+    transition: all 0.1s linear;
+}
+@keyframes show-message {
+    from {
+        transform: translateY(30px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.succes {
+    background: #BEB;
+    color: #040;
+    border-color: #9C9;
+}
+.danger {
+    background: #EBB;
+    color: #700;
+    border-color: #C99;
+}
+.warning {
+    background: #EEA;
+    color: #740;
+    border-color: #CA8;
+}
+.primary {
+    background: #CDE;
+    color: #024;
+    border-color: #ABC;
+}
