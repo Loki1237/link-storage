@@ -1,143 +1,81 @@
 const express = require('express');
 const router = express.Router();
-const Sequelize = require("sequelize");
+const typeorm = require("typeorm");
 
-const sequelize = new Sequelize("links_storage", "joni", "12345678", {
-    dialect: "postgres",
-    host: "localhost",
-    define: {
-        timestamps: false
-    }
-});
-
-const User = sequelize.define("user", {
-    id: {
-        type: Sequelize.INTEGER,
-        primaryKey: true,
-        autoIncrement: true,
-        allowNull: false
-    },
-    name: {
-        type: Sequelize.TEXT,
-        allowNull: false
-    },
-    login: {
-        type: Sequelize.TEXT,
-        allowNull: false
-    },
-    password: {
-        type: Sequelize.TEXT,
-        allowNull: false
-    },
-    PINcode: {
-        type: Sequelize.TEXT,
-        allowNull: false
-    },
-    token: {
-        type: Sequelize.TEXT,
-        allowNull: false
-    }
-})
-
-sequelize.sync().then(
-    result => console.log(result),
-    error => console.log(error)
-);
-
-function encrypt( password ) {
+function encrypt(password) {
     let encrypted = [];
-    for(key of password) {
+    for (key of password) {
         encrypted.push(key.codePointAt(0) ^ 54);
     }
     return encrypted.join(".");
 }
 
-function decrypt( password ) {
+function decrypt(password) {
     let decrypted = password.split(".");
-    for(let i = 0; i < decrypted.length; i++) {
+    for (let i = 0; i < decrypted.length; i++) {
         decrypted[i] = String.fromCodePoint(decrypted[i] ^ 54);
     }
     return decrypted.join("");
 }
 
-function setToken( login, password ) {
+function setToken(login, password) {
     let string = `${login}${password}`;
     let token = "";
-    for(let i = 0; i < string.length; i++) {
+    for (let i = 0; i < string.length; i++) {
         token += string[i].codePointAt(0) ^ 54;
     }
     return token;
 }
 
-router.get('/:login', function(req, res) {
-    User.findOne({
-        where: {
-            login: req.params.login
-        }
-    }).then(
-        user => {
-            if( user ) {
-                user.password = decrypt( user.password );
-                res.json(user);
-            } else {
-                res.json({ error: "not found" });
-            }
-        },
-        error => console.log(error)
-    )
-});
+typeorm.createConnection().then( connection => {
+    const userRepository = connection.getRepository("Users");
 
-router.get('/token/:token', function(req, res) {
-    User.findOne({
-        where: {
-            token: req.params.token
-        }
-    }).then(
-        user => {
-            if( user ) {
-                user.password = decrypt( user.password );
-                res.json(user);
-            } else {
-                res.json({ error: "not found" });
-            }
-        },
-        error => res.send(error)
-    )
-});
-
-router.post('/', function(req, res) {
-    let user = req.body;
-    User.create({
-        name: user.name,
-        login: user.login,
-        password: encrypt(user.password),
-        PINcode: user.PINcode,
-        token: setToken(user.login, user.password)
-    })
-    res.sendStatus(200);
-})
-
-router.put('/', function(req, res) {
-    let user = req.body;
-    User.update({ 
-        password: encrypt(user.password),
-        PINcode: user.PINcode
-    }, {
-        where: {
-            id: user.id
+    router.get('/:login', async function(req, res) {
+        const user = await userRepository.findOne({ login: req.params.login });
+        if (user) {
+            user.password = decrypt(user.password);
+            res.json(user);
+        } else {
+            res.json({ error: "not found" });
         }
     })
-    res.sendStatus(200);
-})
 
-router.delete('/', function(req, res) {
-    let user = req.body;
-    User.destroy({
-        where: {
-            id: user.id
+    router.get('/token/:token', async function(req, res) {
+        const user = await userRepository.findOne({ token: req.params.token });
+        if (user) {
+            user.password = decrypt(user.password);
+            res.json(user);
+        } else {
+            res.json({ error: "not found" });
         }
+    });
+
+    router.post('/', async function(req, res) {
+        const user = await userRepository.create({
+            name: req.body.name,
+            login: req.body.login,
+            password: encrypt( req.body.password ),
+            PINcode: req.body.PINcode,
+            token: setToken( req.body.login, req.body.password )
+        });
+        await userRepository.save(user);
+        return res.sendStatus(200);
+    });
+
+    router.put('/:id', async function(req, res) {
+        let newProps = req.body;
+        newProps.password = encrypt(req.body.password);
+        const user = await userRepository.findOne({ id: req.params.id });
+        await userRepository.merge(user, newProps);
+        await userRepository.save(user);
+        return res.sendStatus(200);
     })
-    res.sendStatus(200);
+
+    router.delete('/:id', async function(req, res) {
+        await userRepository.delete({ id: req.params.id });
+        return res.sendStatus(200);
+    });
+
 });
 
 module.exports = router;

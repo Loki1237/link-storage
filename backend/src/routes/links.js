@@ -1,100 +1,38 @@
 const express = require('express');
 const router = express.Router();
-const Sequelize = require("sequelize");
+const typeorm = require("typeorm");
 
-const sequelize = new Sequelize("links_storage", "joni", "12345678", {
-    dialect: "postgres",
-    host: "localhost",
-    define: {
-        timestamps: false
-    }
-});
+typeorm.createConnection().then( connection => {
+    const linkRepository = connection.getRepository("Links");
 
-const Link = sequelize.define("link", {
-    id: {
-        type: Sequelize.INTEGER,
-        primaryKey: true,
-        autoIncrement: true,
-        allowNull: false
-    },
-    name: {
-        type: Sequelize.TEXT,
-        allowNull: false
-    },
-    URL: {
-        type: Sequelize.TEXT,
-        allowNull: false
-    },
-    userID: {
-        type: Sequelize.INTEGER,
-        allowNull: false
-    },
-    isVisible: {
-        type: Sequelize.BOOLEAN,
-        allowNull: false
-    }
-})
+    router.get('/:userID', async function(req, res) {
+        const links = await linkRepository.find({ userID: req.params.userID });
+        res.json(links);
+    });
 
-sequelize.sync().then(
-    result => console.log(result),
-    error => console.log(error)
-);
-
-router.get('/:userID', function(req, res, next) {
-    Link.findAll({
-        where: {
-            userID: req.params.userID
-        }
-    }).then(
-        links => res.json(links),
-        error => console.log(error)
-    )
-});
-
-router.post('/', function(req, res) {
-    let link = req.body;
-    Link.create({
-        userID: link.userID,
-        name: link.name,
-        URL: link.URL,
-        isVisible: link.isVisible
+    router.post('/', async function(req, res) {
+        const link = await linkRepository.create(req.body);
+        await linkRepository.save(link);
+        return res.sendStatus(200);
     })
-    res.sendStatus(200);
-})
 
-router.put('/', function(req, res) {
-    let link = req.body;
-    Link.update({ 
-        name: link.name, 
-        URL: link.URL,
-        isVisible: link.isVisible
-    }, {
-        where: {
-            id: link.id,
-            userID: link.userID
-        }
+    router.put('/:id', async function(req, res) {
+        const link = await linkRepository.findOne({ id: req.params.id });
+        await linkRepository.merge(link, req.body);
+        await linkRepository.save(link);
+        return res.sendStatus(200);
     })
-    res.sendStatus(200);
-})
 
-router.delete('/', function(req, res) {
-    let link = req.body;
-    Link.destroy({
-        where: {
-            id: link.id,
-            userID: link.userID
-        }
-    })
-    res.sendStatus(200);
-});
+    router.delete('/:id', async function(req, res) {
+        await linkRepository.delete({ id: req.params.id });
+        return res.sendStatus(200);
+    });
 
-router.delete('/:userID', function(req, res) {
-    Link.destroy({
-        where: {
-            userID: req.params.userID
-        }
-    })
-    res.sendStatus(200);
+    router.delete('/all/:userID', async function(req, res) {
+        await linkRepository.delete({ userID: req.params.userID });
+        return res.sendStatus(200);
+    });
+
 });
 
 module.exports = router;
