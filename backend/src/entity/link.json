@@ -1,0 +1,22 @@
+{
+    "name": "Links",
+    "columns": {
+        "id": {
+            "type": "int",
+            "primary": true,
+            "generated": true
+        },
+        "name": {
+            "type": "text"
+        },
+        "URL": {
+            "type": "text"
+        },
+        "userID": {
+            "type": "int"
+        },
+        "isVisible": {
+            "type": "boolean"
+        }
+    }
+}

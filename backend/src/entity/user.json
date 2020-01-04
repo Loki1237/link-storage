@@ -1,0 +1,25 @@
+{
+    "name": "Users",
+    "columns": {
+        "id": {
+            "type": "int",
+            "primary": true,
+            "generated": true
+        },
+        "name": {
+            "type": "text"
+        },
+        "login": {
+            "type": "text"
+        },
+        "password": {
+            "type": "text"
+        },
+        "PINcode": {
+            "type": "text"
+        },
+        "token": {
+            "type": "text"
+        }
+    }
+}
