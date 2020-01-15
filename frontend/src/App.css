@@ -1,5 +1,5 @@
 .body-app {
-    overflow: auto;
+    overflow: hidden;
     width: 100%;
     height: calc(100% - 35px);
     background: #EEE;
