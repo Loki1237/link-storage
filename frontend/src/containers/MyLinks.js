@@ -1,22 +1,24 @@
 import { connect } from 'react-redux';
-import { openAddLink, openChangeLink, openShowHiddenLinks, showMessage } from '../actions/index';
+import { 
+    OpenAddLink, 
+    OpenChangeLink, 
+    OpenShowHiddenLinks
+} from '../actions/index';
 import MyLinks from '../components/MyLinks';
 
-function mapStateToProps( state ) {
+function mapStateToProps(state) {
     return {
         modal: state.modal,
-        user: state.user,
-        elementNames: state.elementNames
-    }
+        appData: state.appData
+    };
 }
 
-function mapDispatchToProps( dispatch ) {
+function mapDispatchToProps(dispatch) {
     return {
-        openModalAddLink: () => dispatch( openAddLink ),
-        openModalChangeLink: () => dispatch( openChangeLink ),
-        openModalShowHiddenLinks: () => dispatch( openShowHiddenLinks ),
-        showMessage: ownProps => dispatch( showMessage( ownProps ) )
-    }
+        openModalAddLink: () => dispatch(OpenAddLink),
+        openModalChangeLink: () => dispatch(OpenChangeLink),
+        openModalShowHiddenLinks: () => dispatch(OpenShowHiddenLinks)
+    };
 }
 
-export default connect( mapStateToProps, mapDispatchToProps )( MyLinks )
+export default connect(mapStateToProps, mapDispatchToProps)(MyLinks);

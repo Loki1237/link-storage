@@ -1,18 +1,17 @@
 import { connect } from 'react-redux';
-import { openUserMenu } from '../actions/index';
+import { OpenUserMenu } from '../actions/index';
 import NavBar from '../components/NavBar';
 
-function mapStateToProps( state ) {
+function mapStateToProps(state) {
     return {
-        user: state.user,
-        elementNames: state.elementNames
-    }
+        appData: state.appData
+    };
 }
 
-function mapDispatchToProps( dispatch ) {
+function mapDispatchToProps(dispatch) {
     return {
-        openUserMenu: () => dispatch( openUserMenu )
-    }
+        openUserMenu: () => dispatch(OpenUserMenu)
+    };
 }
 
-export default connect( mapStateToProps, mapDispatchToProps )( NavBar )
+export default connect(mapStateToProps, mapDispatchToProps)(NavBar);

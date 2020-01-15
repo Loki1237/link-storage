@@ -1,22 +1,28 @@
 import { connect } from 'react-redux';
-import { openChangePassword, openChangePINcode, openDeleteUser, setLanguage, closeUserMenu } from '../actions/index';
+import { 
+    OpenChangePassword, 
+    OpenChangePINcode, 
+    OpenDeleteUser,
+    CloseUserMenu,
+    SetAppData
+} from '../actions/index';
 import UserMenu from '../components/UserMenu';
 
-function mapStateToProps( state ) {
+function mapStateToProps(state) {
     return {
-        modal: state.modal,
-        elementNames: state.elementNames
-    }
+        appData: state.appData,
+        modal: state.modal
+    };
 }
 
-function mapDispatchToProps( dispatch ) {
+function mapDispatchToProps(dispatch) {
     return {
-        openModalChangePassword: () => dispatch( openChangePassword ),
-        openModalChangePINcode: () => dispatch( openChangePINcode ),
-        openModalDeleteUser: () => dispatch( openDeleteUser ),
-        closeUserMenu: () => dispatch( closeUserMenu ),
-        setLanguage: ownProps => dispatch( setLanguage( ownProps ) )
-    }
+        openModalChangePassword: () => dispatch(OpenChangePassword),
+        openModalChangePINcode: () => dispatch(OpenChangePINcode),
+        openModalDeleteUser: () => dispatch(OpenDeleteUser),
+        closeUserMenu: () => dispatch(CloseUserMenu),
+        setAppData: (ownProps) => dispatch(SetAppData(ownProps))
+    };
 }
 
-export default connect( mapStateToProps, mapDispatchToProps )( UserMenu )
+export default connect(mapStateToProps, mapDispatchToProps)(UserMenu);
