@@ -7,16 +7,16 @@ class Dropdown extends React.Component {
         this.closeMenu = this.closeMenu.bind(this);
         this.state = {
             Dropdown: false
-        }
+        };
     }
 
     componentDidMount() {
-        setTimeout( () => this.setState({ Dropdown: true }), 0 );
+        setTimeout(() => this.setState({ Dropdown: true }), 0);
     }
 
     closeMenu() {
         this.setState({ Dropdown: false });
-        setTimeout( this.props.close, 100 );
+        setTimeout(this.props.close, 100);
     }
 
     render() {
@@ -30,9 +30,8 @@ class Dropdown extends React.Component {
                 </div>
 
             </div>
-        )
+        );
     }
-    
 }
 
 export default Dropdown;
