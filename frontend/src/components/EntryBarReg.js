@@ -1,13 +1,15 @@
 import React from 'react';
 import styles from './EntryBar.css';
+import { language } from '../language/index';
 import Button from './subcomponents/Button';
+import InputField from './subcomponents/InputField';
 import history from '../history';
 
 const ButtonStyle = {
     width: "120px",
     height: "30px",
     fontSize: "14px"
-}
+};
 
 class EntryBarReg extends React.Component {
     constructor(props) {
@@ -19,137 +21,177 @@ class EntryBarReg extends React.Component {
             name: "",
             login: "",
             password: "",
-            PINcode: "",
+            PIN: "",
             highlighting: {
                 name: false,
                 login: false,
                 password: false,
-                PINcode: false
+                PIN: false
             },
             regError: {
                 incorrectName: false,
                 incorrectLogin: false,
                 incorrectPassword: false,
                 shortPassword: false,
-                incorrectPINcode: false,
+                incorrectPIN: false
             },
             confirmRegistration: false
-        }
+        };
     }
 
-    highlighting( field ) {
+    highlighting(field) {
         this.setState({ highlighting: { [field]: true } });
-        setTimeout( () => {
+        setTimeout(() => {
             this.setState({ highlighting: false });
-        }, 400 )
+        }, 400);
     }
 
     checkOfName() {
-        for( let symbol of this.state.name ) {
-            if( !/[a-z A-Z а-я А-Я]/.test(symbol) ) {
+        for (let symbol of this.state.name) {
+            if (!/[a-z A-Z а-я А-Я]/.test(symbol)) {
                 return false;
             }
         }
+
         return true;
     }
 
     checkOfLogin() {
-        for( let symbol of this.state.login ) {
-            if( !/[a-z A-Z 0-9 _]/.test(symbol) ) {
+        for (let symbol of this.state.login) {
+            if (!/[a-z A-Z 0-9 _]/.test(symbol)) {
                 return false;
             }
         }
-        if( isFinite( this.state.login[0] ) ) return false;
+
+        if (isFinite(this.state.login[0])) {
+            return false;
+        }
+
         return true;
     }
 
     checkOfPassword() {
-        for( let symbol of this.state.password ) {
-            if( !/[a-z A-Z 0-9]/.test( symbol ) ) {
+        for (let symbol of this.state.password) {
+            if (!/[a-z A-Z 0-9]/.test(symbol)) {
                 return false;
             }
         }
+
         return true;
     }
 
     confirmRegistration() {
         // Подсветка пустого текстового поля
-        if( !this.state.name ) {
-            this.highlighting( "name" );
+        if (!this.state.name) {
+            this.highlighting("name");
         }
-        if( !this.state.login && this.state.name ) {
-            this.highlighting( "login" );
+
+        if (!this.state.login && this.state.name) {
+            this.highlighting("login");
         }
-        if( !this.state.password && this.state.name && this.state.login ) {
-            this.highlighting( "password" );
+
+        if (!this.state.password && this.state.name && this.state.login) {
+            this.highlighting("password");
         }
-        if( !this.state.PINcode && this.state.password && this.state.name && this.state.login ) {
-            this.highlighting( "PINcode" );
+
+        if (!this.state.PIN && this.state.password && this.state.name && this.state.login) {
+            this.highlighting("PIN");
         }
 
         // Ошибка: некорректное имя
-        if( this.state.name && this.state.login && this.state.password && this.state.PINcode &&
-        !this.checkOfName() ) {
-            this.setState({ regError: { incorrectName: true } });
-            setTimeout( () => { this.setState({ regError: false }) }, 2000 );
+        if (
+            this.state.name && this.state.login && 
+            this.state.password && this.state.PIN &&
+            !this.checkOfName() &&
+            !this.state.regError.incorrectName
+        ) {
+            this.props.showMessage({ 
+                text: language.EntryBar.regErrorIncorrectName, 
+                color: "danger" 
+            });
         }
 
         // Ошибка: некорректный логин
-        if( this.state.name && this.state.login && this.state.password && this.state.PINcode &&
-        this.checkOfName() && !this.checkOfLogin() ) {
-            this.setState({ regError: { incorrectLogin: true } });
-            setTimeout( () => { this.setState({ regError: false }) }, 2000 );
+        if ( 
+            this.state.name && this.state.login && 
+            this.state.password && this.state.PIN &&
+            this.checkOfName() && !this.checkOfLogin() &&
+            !this.state.regError.incorrectLogin
+        ) {
+            this.props.showMessage({ 
+                text: language.EntryBar.regErrorIncorrectLogin, 
+                color: "danger" 
+            });
         }
 
         // Ошибка: некорректный пароль
-        if( this.state.name && this.state.login && this.state.password && this.state.PINcode &&
-        this.checkOfName() && this.checkOfLogin() && !this.checkOfPassword() &&
-        !this.state.regError.shortPassword ) {
-            this.setState({ regError: { incorrectPassword: true } });
-            setTimeout( () => { this.setState({ regError: false }) }, 2000 );
+        if ( 
+            this.state.name && this.state.login && 
+            this.state.password && this.state.PIN &&
+            this.checkOfName() && this.checkOfLogin() && !this.checkOfPassword() &&
+            !this.state.regError.incorrectPassword 
+        ) {
+            this.props.showMessage({ 
+                text: language.EntryBar.regErrorIncorrectPassword, 
+                color: "danger" 
+            });
         }
 
         // Ошибка: слишком короткий пароль
-        if( this.state.name && this.state.login && this.state.password && this.state.PINcode &&
-        this.checkOfName() && this.checkOfLogin() && this.checkOfPassword() &&
-        this.state.password.length < 6 && !this.state.regError.shortPassword ) {
-            this.setState({ regError: { shortPassword: true } });
-            setTimeout( () => { this.setState({ regError: false }) }, 2000 );
+        if ( 
+            this.state.name && this.state.login && 
+            this.state.password && this.state.PIN &&
+            this.checkOfName() && this.checkOfLogin() && this.checkOfPassword() &&
+            this.state.password.length < 8 && !this.state.regError.shortPassword 
+        ) {
+            this.props.showMessage({ 
+                text: language.EntryBar.regErrorVeryShortPassword, 
+                color: "danger" 
+            });
         }
 
         // Ошибка: некорректный PIN-код
-        if( this.state.name && this.state.login && this.state.password && this.state.PINcode &&
-        this.checkOfName() && this.checkOfLogin() && this.checkOfPassword() &&
-        this.state.password.length >= 6 && !this.state.regError.incorrectPINcode && 
-        (!isFinite(this.state.PINcode) || this.state.PINcode.length < 4) ) {
-            this.setState({ regError: { incorrectPINcode: true } });
-            setTimeout( () => { this.setState({ regError: false }) }, 2000 );
+        if (
+            this.state.name && this.state.login && 
+            this.state.password && this.state.PIN &&
+            this.checkOfName() && this.checkOfLogin() && this.checkOfPassword() &&
+            this.state.password.length >= 8 && !this.state.regError.PIN && 
+            (!isFinite(this.state.PIN) || this.state.PIN.length < 4) 
+        ) {
+            this.props.showMessage({ 
+                text: language.EntryBar.regErrorIncorrectPINcode, 
+                color: "danger" 
+            });
         }
 
         // Если все условия соблюдены - зарегестрировать
-        if( this.state.name && this.state.login && this.state.password && this.state.PINcode &&
-        this.checkOfName() && this.checkOfLogin() && this.checkOfPassword() &&
-        this.state.password.length >= 6 && this.state.PINcode.length === 4 && isFinite(this.state.PINcode) ) {
-
-            fetch(`api/users/${this.state.login}`)
-                .then( res => res.json( res ))
-                .then( user => {
-                    if( !user.error ) {
+        if (
+            this.state.name && this.state.login && 
+            this.state.password && this.state.PIN &&
+            this.checkOfName() && this.checkOfLogin() && this.checkOfPassword() &&
+            this.state.password.length >= 8 && this.state.PIN.length === 4 && 
+            isFinite(this.state.PIN) 
+        ) {
+            fetch(`api/users/find/${this.state.login}`)
+                .then(res => res.json(res))
+                .then(user => {
+                    if (user) {
                         this.props.showMessage({ 
-                            text: this.props.elementNames.Message.errorOfNotUniqueLogin,
+                            text: language.Message.errorOfNotUniqueLogin,
                             color: "danger" 
-                        })
+                        });
                     } 
-                    if( user.error ) {
-                        this.setState({ confirmRegistration: true })
+
+                    if (!user) {
+                        this.setState({ confirmRegistration: true });
                     }
                 })
-                .catch( () => {
+                .catch(() => {
                     this.props.showMessage({ 
-                        text: this.props.elementNames.Message.errorOfServer,
+                        text: language.Message.errorOfServer,
                         color: "danger" 
-                    })
-                } )
+                    });
+                });
         }
     }
 
@@ -163,191 +205,136 @@ class EntryBarReg extends React.Component {
                 name: this.state.name,
                 login: this.state.login,
                 password: this.state.password,
-                PINcode: this.state.PINcode,
+                PIN: this.state.PIN
             })
-        })
-            .then( () => {
-                this.setState({ confirmRegistration: false });
-                this.props.showMessage({ 
-                    text: `${this.props.elementNames.Message.messageAboutReg}: ${this.state.login}`, 
-                    color: "succes" 
-                });
-                history.push('/aut');
-            })
-            .catch( () => {
-                error => this.props.showMessage({ text: error, color: "danger" });
-            })
+        }).then(() => {
+            this.setState({ confirmRegistration: false });
+            this.props.showMessage({ 
+                text: `${language.Message.messageAboutReg}: ${this.state.login}`, 
+                color: "success" 
+            });
+            history.push('/aut');
+        }).catch(error => {
+            this.props.showMessage({ text: error, color: "danger" });
+        });
     }
 
     render() {
         return (
             <div className={styles.EntryBar}>
                 <header className={styles.header}>
-                    {/* header */ this.props.elementNames.EntryBar.RegBarHeader}
+                    {/* header */ language.EntryBar.RegBarHeader}
                 </header>
 
                 {/*========== И М Я ===========*/}
-                <div className={styles["input-field"]}>
-                    <input type="text"  
-                        autoComplete="off"
-                        autoFocus
-                        className={`${styles.input}
-                            ${this.state.highlighting.name ? styles.highlighting : ""}`}
-                        value={this.state.name}
-                        onChange={(e) => {
-                            this.setState({ name: e.target.value });
-                        }} />
-                    <span className={styles["input-field-name"]}>
-                        {/* name */ this.props.elementNames.EntryBar.name}
-                    </span>
-
-                    {this.state.regError.incorrectName && <div className={styles.regError}>
-                        {/* value */ this.props.elementNames.EntryBar.regErrorIncorrectName}
-                    </div>}
-                </div>
+                <InputField type="text"
+                    name={language.EntryBar.name}
+                    highlighting={this.state.highlighting.name}
+                    autoFocus
+                    value={this.state.name}
+                    onChange={(e) => {
+                        this.setState({ name: e.target.value });
+                    }} />
               
                 {/*========== Л О Г И Н  ===========*/}
-                <div className={styles["input-field"]}>
-                    <input type="text" 
-                        autoComplete="off"
-                        className={`${styles.input}
-                            ${this.state.highlighting.login ? styles.highlighting : ""}`}
-                        value={this.state.login}
-                        onChange={(e) => {
-                            this.setState({ login: e.target.value });
-                        }} />
-                    <span className={styles["input-field-name"]}>
-                        {/* name */ this.props.elementNames.EntryBar.login}
-                    </span>
-
-                    {this.state.regError.incorrectLogin && <div className={styles.regError}>
-                        {/* value */ this.props.elementNames.EntryBar.regErrorIncorrectLogin}
-                    </div>}
-                </div>
+                <InputField type="text"
+                    name={language.EntryBar.login}
+                    highlighting={this.state.highlighting.login}
+                    value={this.state.login}
+                    onChange={(e) => {
+                        this.setState({ login: e.target.value });
+                    }} />
               
                 {/*========== П А Р О Л Ь ===========*/}
-                <div className={styles["input-field"]}>
-                    <input type={this.state.showPassword ? "text" : "password"} 
-                        autoComplete="off"
-                        maxLength="12"
-                        className={`${styles.input}
-                            ${this.state.highlighting.password ? styles.highlighting : ""}`}
-                        value={this.state.password}
-                        onChange={(e) => {
-                            this.setState({ password: e.target.value });
-                        }} />
-                    <span className={styles["input-field-name"]}>
-                        {/* name */ this.props.elementNames.EntryBar.password}
-                    </span>
-
-                    <div className={styles.eye}
-                        title={this.props.elementNames.EntryBar.titlePassword}
-                        onClick={() => {
-                            this.setState({ showPassword: !this.state.showPassword ? true : false });
-                        }}>
-                        {!this.state.showPassword && <div className={styles["eye-slash"]}></div>}
-                    </div>
-
-                    {this.state.regError.incorrectPassword && <div className={styles.regError}>
-                        {/* value */ this.props.elementNames.EntryBar.regErrorIncorrectPassword}
-                    </div>}
-
-                    {this.state.regError.shortPassword && <div className={styles.regError}>
-                        {/* value */ this.props.elementNames.EntryBar.regErrorVeryShortPassword}
-                    </div>}
-                </div>
+                <InputField type="password"
+                    name={language.EntryBar.password}
+                    highlighting={this.state.highlighting.password}
+                    maxLength="12"
+                    value={this.state.password}
+                    onChange={(e) => {
+                        this.setState({ password: e.target.value });
+                    }} />
               
                 {/*========== P I N - C O D E  ===========*/}
-                <div className={styles["input-field"]}>
-                    <input type="text" 
-                        autoComplete="off"
-                        maxLength="4"
-                        className={`${styles.input}
-                            ${this.state.highlighting.PINcode ? styles.highlighting : ""}`}
-                        value={this.state.PINcode}
-                        onChange={(e) => {
-                            this.setState({ PINcode: e.target.value });
-                        }} />
-                    <span className={styles["input-field-name"]}>
-                        {/* name */ this.props.elementNames.EntryBar.PINcode}
-                    </span>
-
-                    <div className={styles.tip}
-                        title={this.props.elementNames.EntryBar.titlePINcode}>
-                        ?
-                    </div>
-
-                    {this.state.regError.incorrectPINcode && <div className={styles.regError}>
-                        {/* value */ this.props.elementNames.EntryBar.regErrorIncorrectPINcode}
-                    </div>}
-                </div>
+                <InputField type="text"
+                    name={language.EntryBar.PINcode}
+                    highlighting={this.state.highlighting.PIN}
+                    maxLength="4"
+                    tip={language.EntryBar.titlePINcode}
+                    value={this.state.PIN}
+                    onChange={(e) => {
+                        this.setState({ PIN: e.target.value });
+                    }} />
               
                 {/*========== К Н О П К И ===========*/}
                 <div className={styles["buttons-container"]}>
                     <Button color="primary" style={ButtonStyle}
-                        onClick={() => history.push("/aut")}>
-                        {/* name */ this.props.elementNames.EntryBar.buttonCancel}
+                        onClick={() => {
+                            history.push("/aut");
+                        }}>
+                        {/* name */ language.EntryBar.buttonCancel}
                     </Button>
 
                     <Button color="primary" style={ButtonStyle}
-                        onClick={ this.confirmRegistration }>
-                        {/* name */ this.props.elementNames.EntryBar.buttonContinue}
+                        onClick={this.confirmRegistration}>
+                        {/* name */ language.EntryBar.buttonContinue}
                     </Button>
                 </div>
               
                 {/*========== ПОДТВЕРЖДЕНИЕ РЕГИСТРАЦИИ ===========*/}
                 {this.state.confirmRegistration && <div className={styles.confirmRegistration}>
                     <span>
-                        {/* value */ this.props.elementNames.EntryBar.confirmOfRegistration}
+                        {/* value */ language.EntryBar.confirmOfRegistration}
                     </span>
 
                     <div className={styles["confirmRegistration-user-data"]}>
                         {/* Имя */}
                         <div className={styles["confirmRegistration-string"]}>
-                            <span>{this.props.elementNames.EntryBar.name}:</span>
+                            <span>{language.EntryBar.name}:</span>
                             <div className={styles["confirmRegistration-ellipsis"]}></div>
                             <span>{this.state.name}</span>
                         </div>
 
                         {/* Логин */}
                         <div className={styles["confirmRegistration-string"]}>
-                            <span>{this.props.elementNames.EntryBar.login}:</span>
+                            <span>{language.EntryBar.login}:</span>
                             <div className={styles["confirmRegistration-ellipsis"]}></div>
                             <span>{this.state.login}</span>
                         </div>
 
                         {/* Пароль */}
                         <div className={styles["confirmRegistration-string"]}>
-                            <span>{this.props.elementNames.EntryBar.password}:</span>
+                            <span>{language.EntryBar.password}:</span>
                             <div className={styles["confirmRegistration-ellipsis"]}></div>
                             <span>{this.state.password}</span>
                         </div>
 
                         {/* ПИН-код */}
                         <div className={styles["confirmRegistration-string"]}>
-                            <span>{this.props.elementNames.EntryBar.PINcode}:</span>
+                            <span>{language.EntryBar.PINcode}:</span>
                             <div className={styles["confirmRegistration-ellipsis"]}></div>
-                            <span>{this.state.PINcode}</span>
+                            <span>{this.state.PIN}</span>
                         </div>
                     </div>
 
                     <div className={styles["buttons-container"]}>
-                        <Button color="secondary" style={ButtonStyle}
-                            onClick={() => this.setState({ confirmRegistration: false })}>
-                            {/* name */ this.props.elementNames.EntryBar.buttonCancel}
+                        <Button color="cancel" style={ButtonStyle}
+                            onClick={() => {
+                                this.setState({ confirmRegistration: false });
+                            }}>
+                            {/* name */ language.EntryBar.buttonCancel}
                         </Button>
 
                         <Button color="primary" style={ButtonStyle}
                             onClick={this.registration}>
-                            {/* name */ this.props.elementNames.EntryBar.buttonContinue}
+                            {/* name */ language.EntryBar.buttonContinue}
                         </Button>
                     </div>
                 </div>}
 
             </div>
-        )
+        );
     }
-
 }
 
 export default EntryBarReg;
