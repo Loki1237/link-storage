@@ -1,42 +1,43 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { setLanguage } from '../../actions/index';
+import { SetAppData } from '../../actions/index';
+import { translate } from '../../language/index';
 import styles from './LanguageSwitch.css';
 
 function LanguageSwitch(props) {
     return (
         <div className={styles.LanguageSwitch}>
-            <span className={styles["lang-item"]}
+            <button className={styles["lang-item"]}
                 onClick={ () => {
-                    props.setLanguage({ lang: "eng" });
-                    localStorage.setItem("lang", "eng");
+                    translate("eng");
+                    props.setLang("eng");
                 } }>
                 English
-            </span>
+            </button>
 
-            <span className={styles["lang-item"]}
+            <button className={styles["lang-item"]}
                 onClick={ () => {
-                    props.setLanguage({ lang: "rus" });
-                    localStorage.setItem("lang", "rus");
+                    translate("rus");
+                    props.setLang("rus");
                 } }>
                 Русский
-            </span>
+            </button>
         </div>
-    )
+    );
 }
 
 //===============================================================
 
-function mapStateToProps( state ) {
+function mapStateToProps(state) {
     return {
-        elementNames: state.elementNames
-    }
+        appData: state.appData
+    };
 }
-
-function mapDispatchToProps( dispatch ) {
+  
+function mapDispatchToProps(dispatch) {
     return {
-        setLanguage: ownProps => dispatch( setLanguage( ownProps ) ),
-    }
+        setAppData: (ownProps) => dispatch(SetAppData(ownProps))
+    };
 }
-
-export default connect( mapStateToProps, mapDispatchToProps )( LanguageSwitch );
+  
+export default connect(mapStateToProps, mapDispatchToProps)(LanguageSwitch);
