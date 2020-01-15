@@ -8,5 +8,5 @@ export default function MenuItem(props) {
             <img src={props.image} alt="" width="10px" height="10px" hspace="6" />
             {props.children}
         </span>
-    )
+    );
 }
