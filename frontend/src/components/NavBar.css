@@ -13,7 +13,7 @@
     left: 0;
     top: 0;
 }
-.NavBar-label {
+.label {
     cursor: default;
     height: 24px;
     color: #FFF;
@@ -21,14 +21,14 @@
     font: 600 18px tahoma;
     padding: 0 4px;
 }
-.NavBar-item {
+.item {
     height: 34px;
     border: none;
     border-left: solid 1px #FFF;
     border-right: solid 1px #FFF;
     background: transparent;
     color: #FFF;
-    font: normal 14px tahoma;
+    font: normal 16px tahoma;
     padding-left: 16px;
     padding-right: 12px;
     cursor: pointer;
@@ -36,21 +36,22 @@
     position: relative;
     transition: 0.25s;
 }
-.NavBar-item:before {
+.item:before {
     content: "";
-    width: 7px;
-    height: 7px;
-    background: linear-gradient(to right top, #FFF 50%, transparent 50%);
-    transform: rotate(45deg);
+    width: 6px;
+    height: 6px;
+    border-left: solid 1px #FFF;
+    border-top: solid 1px #FFF;
+    transform: rotate(-45deg);
     position: absolute;
     margin: auto;
     top: 0;
     bottom: 0;
     left: 6px;
 }
-.NavBar-item:hover {
+.item:hover {
     background: rgba(255, 255, 255, 0.3);
 }
-.NavBar-item:active {
+.item:active {
     background: rgba(0, 0, 0, 0.15);
 }
