@@ -10,10 +10,9 @@
     border-right: solid 1px #CCC;
     background: #FFF;
     box-sizing: border-box;
-    padding-top: 16px;
     margin: 0 auto;
     position: relative;
-    animation: MyLinksAnimation 0.1s 1 linear;
+    animation: MyLinksAnimation 0.25s 1 linear;
 }
 
 @keyframes MyLinksAnimation {
@@ -24,24 +23,35 @@
         opacity: 1;
     }
 }
-.ML-container {
+.bookmarks-container {
     width: 100%;
     height: 100%;
-    border-top: solid 1px #CCC;
     box-sizing: border-box;
     padding: 8px 0 160px 0;
     position: relative;
     overflow-y: scroll;
 }
 
-.ML-search {
+.buttons-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 10px 5%;
+    border-bottom: solid 1px #CCC;
+}
+
+.search {
     display: flex;
     flex-direction: row;
     width: 46%;
     height: 30px;
     position: relative;
 }
-.ML-search-input {
+.search-input {
     width: calc(100% - 30px);
     height: 100%;
     background: #FFF;
@@ -55,10 +65,10 @@
     outline: none;
     transition: all 0.1s linear;
 }
-.ML-search-input::placeholder {
+.search-input::placeholder {
     transition: color 0.2s linear;
 }
-.ML-search-badge {
+.search-badge {
     width: 30px;
     height: 30px;
     background: #288;
@@ -66,7 +76,7 @@
     position: relative;
     transition: all 0.1s linear;
 }
-.ML-search-badge:before {
+.search-badge:before {
     content: "";
     width: 10px;
     height: 10px;
@@ -76,7 +86,7 @@
     left: 5px;
     top: 5px;
 }
-.ML-search-badge:after {
+.search-badge:after {
     content: "";
     width: 3px;
     height: 10px;
@@ -86,201 +96,26 @@
     left: 18px;
     top: 15px;
 }
-.ML-search:hover > .ML-search-input {
+.search:hover > .search-input {
     border-color: #4AA;
 }
-.ML-search:hover > .ML-search-badge {
+.search:hover > .search-badge {
     background: #4AA;
 }
-.ML-search-input:focus {
+.search-input:focus {
     border-color: #4AA;
 }
-.ML-search-input:focus + .ML-search-badge {
+.search-input:focus + .search-badge {
     background: #4AA;
 }
-.ML-search-input:focus::placeholder {
+.search-input:focus::placeholder {
     color: #CCC;
-}
-
-.ML-buttons-container {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: flex-start;
-    flex-wrap: wrap;
-    width: 90%;
-    margin-bottom: 16px;
 }
 
 @media (max-width: 620px) {
     .MyLinks {
         width: 100%;
     }
-    .ML-button {
-        font-size: 13px;
-    }
-}
-
-@media (max-width: 540px) {
-    .ML-button {
-        font-size: 12px;
-    }
-}
-
-.link {
-    display: flex;
-    flex-direction: row;
-    justify-content: flex-start;
-    align-items: center;
-    cursor: default;
-    height: 28px;
-    width: 90%;
-    box-sizing: border-box;
-    border: solid 1px #AAA;
-    border-radius: 3px;
-    background: #EEE;
-    position: relative;
-    margin: 10px auto;
-}
-.link-searched {
-    animation: searched-flashing 1s infinite linear;
-}
-@keyframes searched-flashing {
-    0% {
-        box-shadow: 0 0 0 1px #FFF, 0 0 0 5px #FFF;
-    }
-    50% {
-        box-shadow: 0 0 0 1px #FFF, 0 0 0 5px #088;
-    }
-    100% {
-        box-shadow: 0 0 0 1px #FFF, 0 0 0 5px #FFF;
-    }
-}
-
-.hiddenLink {
-    border-color: #666;
-}
-.hiddenLink-badge {
-    height: 28px;
-    width: 28px;
-    border-radius: 3px 0 0 3px;
-    background: #666;
-    position: relative;
-    margin-left: -1px;
-}
-.hiddenLink-badge-eye {
-    content: "";
-    height: 12px;
-    width: 12px;
-    border: solid 2px #EEE;
-    border-radius: 50% 0;
-    transform: rotate(45deg);
-    position: absolute;
-    margin: auto;
-    right: 0;
-    left: 0;
-    top: 0;
-    bottom: 0
-}
-.hiddenLink-badge-eye:before {
-    content: "";
-    width: 8px;
-    height: 8px;
-    background: #EEE;
-    border-radius: 50%;
-    position: absolute;
-    margin: auto;
-    left: 0;
-    right: 0;
-    top: 0;
-    bottom: 0;
-}
-.hiddenLink-badge-eye:after {
-    content: "";
-    width: 2px;
-    height: 24px;
-    box-shadow: 0 0 0 1px #666;
-    background: #EEE;
-    position: absolute;
-    margin: auto;
-    left: 0;
-    right: 0;
-    top: 0;
-    bottom: 0;
-    transform: rotate(90deg);
-}
-
-.link-icon {
-    height: 16px;
-    width: 16px;
-    margin: 0 8px;
-}
-.link-name {
-    flex-shrink: 0;
-    height: inherit;
-    box-sizing: border-box;
-    font: 14px tahoma;
-    color: #222;
-    line-height: 26px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    cursor: pointer;
-}
-.link-URL {
-    flex-grow: 1;
-    height: inherit;
-    box-sizing: border-box;
-    font: 12px tahoma;
-    color: #AAA;
-    line-height: 26px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    padding-left: 14px;
-    transition: all 0.1s linear;
-    cursor: pointer;
-}
-.link:hover {
-    background: #F5F5F5;
-}
-.link:hover > .link-URL {
-    color: #222;
-    font-size: 14px;
-}
-
-.link-button-dropdown {
-    cursor: default;
-    height: 26px;
-    width: 26px;
-    border: none;
-    border-left: solid 1px #AAA;
-    border-radius: 0 3px 3px 0;
-    background: #EEE;
-    outline: none;
-    transition: 0.1s;
-    position: relative;
-}
-.link-button-dropdown:before {
-    content: "";
-    height: 8px;
-    width: 8px;
-    border-left: solid 1px #222;
-    border-bottom: solid 1px #222;
-    transform: rotate(-45deg);
-    transition: 0.1s;
-    position: absolute;
-    margin: auto;
-    right: 0;
-    left: 0;
-    top: 6px;
-}
-.link-button-dropdown:hover {
-    background: #DDD;
-}
-.link-button-dropdown:hover:before {
-    border-color: #666;
-    border-width: 2px;
 }
 
 .notLinks {
@@ -289,7 +124,7 @@
     font: normal 20px tahoma;
     color: #222;
     position: absolute;
-      margin: auto;
+    margin: auto;
     left: 0;
     right: 0;
     top: 0;
@@ -310,13 +145,13 @@
     right: 0;
     top: 0;
     bottom: 0;
-    animation: loading-rotate infinite 1s linear;
+    animation: loading-rotation infinite 1s linear;
 }
-@keyframes loading-rotate {
+@keyframes loading-rotation {
     0% {
-        transform: rotate(0deg)
+        transform: rotate(0deg);
     }
     100% {
-        transform: rotate(360deg)
+        transform: rotate(360deg);
     }
 }
