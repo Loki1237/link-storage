@@ -1,78 +1,128 @@
 const express = require('express');
 const router = express.Router();
-const typeorm = require("typeorm");
+const typeorm = require('typeorm');
+const jwt = require('jsonwebtoken');
+const bcrypt = require('bcrypt');
 
-function encrypt(password) {
-    let encrypted = [];
-    for (key of password) {
-        encrypted.push(key.codePointAt(0) ^ 54);
-    }
-    return encrypted.join(".");
-}
+const saltRounds = 12;
+const privateKey = "jf7w3jfwkd8k7b2";
 
-function decrypt(password) {
-    let decrypted = password.split(".");
-    for (let i = 0; i < decrypted.length; i++) {
-        decrypted[i] = String.fromCodePoint(decrypted[i] ^ 54);
-    }
-    return decrypted.join("");
-}
-
-function setToken(login, password) {
-    let string = `${login}${password}`;
-    let token = "";
-    for (let i = 0; i < string.length; i++) {
-        token += string[i].codePointAt(0) ^ 54;
-    }
-    return token;
-}
-
-typeorm.createConnection().then( connection => {
+typeorm.createConnection().then(connection => {
     const userRepository = connection.getRepository("Users");
+    
+    router.get('/find/:login', async function(req, res) {
+        const user = await userRepository.findOne({ 
+            login: req.params.login
+        });
 
-    router.get('/:login', async function(req, res) {
-        const user = await userRepository.findOne({ login: req.params.login });
         if (user) {
-            user.password = decrypt(user.password);
-            res.json(user);
+            res.send(true);
+        } else {
+            res.send(false);
+        }
+    });
+
+    router.get('/login/:login/:password', async function(req, res) {
+        const user = await userRepository.findOne({ login: req.params.login });
+        const check = user 
+            ? await bcrypt.compare(req.params.password, user.password) 
+            : false;
+
+        if (check) {
+            const token = await jwt.sign({ id: user.id, login: user.login }, privateKey);
+            res.json({
+                id: user.id,
+                name: user.name,
+                login: user.login,
+                show: user.show,
+                token
+            });
         } else {
             res.json({ error: "not found" });
         }
-    })
+    });
 
     router.get('/token/:token', async function(req, res) {
-        const user = await userRepository.findOne({ token: req.params.token });
+        const decoded = await jwt.verify(req.params.token, privateKey);
+        const user = await userRepository.findOne({ id: decoded.id, login: decoded.login });
+
         if (user) {
-            user.password = decrypt(user.password);
-            res.json(user);
+            res.json({
+                id: user.id,
+                name: user.name,
+                login: user.login,
+                show: user.show
+            });
         } else {
             res.json({ error: "not found" });
         }
     });
 
     router.post('/', async function(req, res) {
+        const passwordHash = await bcrypt.hash(req.body.password, saltRounds);
         const user = await userRepository.create({
             name: req.body.name,
             login: req.body.login,
-            password: encrypt( req.body.password ),
-            PINcode: req.body.PINcode,
-            token: setToken( req.body.login, req.body.password )
+            password: passwordHash,
+            PIN: req.body.PIN,
+            show: "visible"
         });
         await userRepository.save(user);
+
         return res.sendStatus(200);
     });
 
     router.put('/:id', async function(req, res) {
-        let newProps = req.body;
-        newProps.password = encrypt(req.body.password);
+        const PIN = req.body.PIN;
         const user = await userRepository.findOne({ id: req.params.id });
-        await userRepository.merge(user, newProps);
+
+        const passwordCheck = req.body.password 
+            ? await bcrypt.compare(req.body.password, user.password) 
+            : null;
+        
+        if (req.body.newPassword) {
+            if (passwordCheck) {
+                const passwordHash = await bcrypt.hash(req.body.newPassword, saltRounds);
+                await userRepository.merge(user, { password: passwordHash });
+            } else {
+                return res.status(400).send({
+                    error: "Incorrect password"
+                });
+            }
+        }
+        
+        if (req.body.newPIN) {
+            if (passwordCheck) {
+                await userRepository.merge(user, { PIN: req.body.newPIN });
+            } else {
+                return res.status(400).send({
+                    error: "Incorrect password"
+                });
+            }
+        }
+
+        if (req.body.show) {
+            if (PIN === user.PIN) {
+                await userRepository.merge(user, { 
+                    show: user.show === "visible" ? "all" : "visible"
+                });
+            } else {
+                return res.status(400).send({
+                    error: "Incorrect PIN"
+                });
+            }
+        }
+
         await userRepository.save(user);
-        return res.sendStatus(200);
-    })
+
+        return res.status(200).send({ 
+            success: "OK"
+        });
+    });
 
     router.delete('/:id', async function(req, res) {
         await userRepository.delete({ id: req.params.id });
+
         return res.sendStatus(200);
     });
 
