@@ -10,7 +10,7 @@ function LanguageSwitch(props) {
             <button className={styles["lang-item"]}
                 onClick={ () => {
                     translate("eng");
-                    props.setLang("eng");
+                    props.setAppData({ lang: "eng" });
                 } }>
                 English
             </button>
@@ -18,7 +18,7 @@ function LanguageSwitch(props) {
             <button className={styles["lang-item"]}
                 onClick={ () => {
                     translate("rus");
-                    props.setLang("rus");
+                    props.setAppData({ lang: "rus" });
                 } }>
                 Русский
             </button>
