@@ -1,18 +1,17 @@
 import { connect } from 'react-redux';
-import { authorization, showMessage } from '../actions/index';
+import { SetAppData } from '../actions/index';
 import EntryBarAut from '../components/EntryBarAut';
 
-function mapStateToProps( state ) {
+function mapStateToProps(state) {
     return {
-        elementNames: state.elementNames
-    }
+        appData: state.appData
+    };
 }
 
-function mapDispatchToProps( dispatch ) {
+function mapDispatchToProps(dispatch) {
     return {
-        authorization: ownProps => dispatch( authorization( ownProps ) ),
-        showMessage: ownProps => dispatch( showMessage( ownProps ) )
-    }
+        setAppData: (ownProps) => dispatch(SetAppData(ownProps))
+    };
 }
 
-export default connect( mapStateToProps, mapDispatchToProps )( EntryBarAut )
+export default connect(mapStateToProps, mapDispatchToProps)(EntryBarAut);
