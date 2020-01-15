@@ -5,6 +5,7 @@
     align-items: center;
     width: 80px;
     height: 24px;
+    position: relative;
     box-sizing: border-box;
     background: #AAA;
     border-radius: 3px;
@@ -25,11 +26,11 @@
     background: #4AA;
 }
 
-.secondary {
+.cancel {
     background: transparent;
     color: #055;
     border: solid 1px #288;
 }
-.secondary:hover {
+.cancel:hover {
     background: #DDF;
 }
