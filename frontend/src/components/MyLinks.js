@@ -1,24 +1,25 @@
 import React from 'react';
 import copy from 'copy-to-clipboard';
+import { language } from '../language/index';
 import styles from './MyLinks.css';
 
 import Dropdown from './subcomponents/Dropdown';
 import MenuItem from './subcomponents/MenuItem';
 import Button from './subcomponents/Button';
 import Modal from './subcomponents/Modal';
+import Bookmark from './subcomponents/Bookmark';
 
-import img_open from './images/img_open.png';
-import img_open_new_window from './images/img_open_new_window.png';
-import img_copy from'./images/img_copy.png';
-import img_edit from'./images/img_edit.png';
-import img_delete from './images/img_delete.png';
-import img_cancel from './images/img_cancel.png';
+import imgOpen from './images/img_open.png';
+import imgOpenNewWindow from './images/img_open_new_window.png';
+import imgCopy from './images/img_copy.png';
+import imgEdit from './images/img_edit.png';
+import imgDelete from './images/img_delete.png';
 
 const ButtonStyle = {
     width: "25%",
     height: "30px",
     fontSize: "14px"
-}
+};
 
 class MyLinks extends React.Component {
     constructor(props) {
@@ -28,7 +29,6 @@ class MyLinks extends React.Component {
         this.state = {
             storage: [],
             isLinks: undefined,
-            showHiddenLinks: false,
             dropdown: {
                 isVisible: false,
                 link: {},
@@ -39,157 +39,121 @@ class MyLinks extends React.Component {
             },
             search: "",
             linkData: {}
-        }
+        };
     }
 
     componentDidMount() {
-        setTimeout( () => {
+        setTimeout(() => {
             this.createList();
-        }, 500 )
+        }, 500);
     }
 
     createList() {
-        this.setState({ showHiddenLinks: localStorage.getItem("showHidden") ? true : false })
-        fetch(`/api/links/${this.props.user.id}`)
+        fetch(`/api/links/${this.props.appData.user.id}`)
             .then(res => res.json())
             .then(links => {
-                let allLinks = links;
-                let visibleLinks = allLinks.filter( link => link.isVisible );
-                this.setState({ storage: this.state.showHiddenLinks ? allLinks : visibleLinks })
-                this.setState({ isLinks: this.state.storage.length ? true : false })
+                this.setState({ storage: links });
+                this.setState({ isLinks: this.state.storage.length >= 1 });
             })
-            .catch(err => {
-                this.setState({ isLinks: false })
-            })
+            .catch(() => {
+                this.setState({ isLinks: false });
+            });
     }
 
-    copyToClipboard( text ) {
-        copy( text );
+    copyToClipboard(text) {
+        copy(text);
         this.props.showMessage({ 
-            text: `${this.props.elementNames.Message.copyToClipboard}: ${text}`,
-            color: "primary" 
+            text: `${language.Message.copyToClipboard}: ${text}`,
+            color: "info" 
         });
     }
 
-    deleteLink( id, userID ) {
-        fetch('/api/links', {
+    deleteLink(id) {
+        fetch(`/api/links/${id}`, {
             method: 'DELETE',
             headers: {
                 'Content-Type': 'application/json;charset=utf-8'
-            },
-            body: JSON.stringify({
-                userID,
-                id
-            })
-        }).then(
-            res => this.createList(),
-            err => alert( err )
-        )
+            }
+        }).then(() => {
+            this.createList();
+        }).catch(error => {
+            this.props.showMessage({ 
+                text: error,
+                color: "primary" 
+            });
+        });
     }
 
     closeDropdown() {
-        this.setState({ dropdown: { 
-            id: "", 
-            style: {
-                left: 0,
-                top: 0
-            }
-        } })
+        this.setState({ 
+            dropdown: { 
+                id: "", 
+                style: {
+                    left: 0,
+                    top: 0
+                }
+            } 
+        });
     }
     
     render() {
         return (
             <div className={styles.MyLinks}>
 
-                <div className={styles["ML-buttons-container"]}>
+                <div className={styles["buttons-container"]}>
 
                     {/* кнопка - показать скрытые закладки */}
                     <Button color="primary" style={ButtonStyle}
-                        onClick={ () => {
-                            if( !this.state.showHiddenLinks ) {
-                                this.props.openModalShowHiddenLinks();
-                            } else {
-                                localStorage.removeItem("showHidden");
-                                this.createList();
-                            }
-                        } }>
-                        {/* name */ !this.state.showHiddenLinks ? 
-                            this.props.elementNames.MyLinks.showHidden : 
-                            this.props.elementNames.MyLinks.hideHidden}
+                        onClick={this.props.openModalShowHiddenLinks}>
+                        {/* name */ language.MyLinks.secret}
                     </Button>
                     
                     {/* текстовое поле поиска */}
-                    <div className={styles["ML-search"]}>
+                    <div className={styles.search}>
                         <input type="text"
-                            className={styles["ML-search-input"]}
-                            placeholder={this.props.elementNames.MyLinks.search}
+                            className={styles["search-input"]}
+                            placeholder={language.MyLinks.search}
                             value={this.state.search}
-                            onChange={ (e) => {
+                            onChange={(e) => {
                                 this.setState({ search: e.target.value });
                             }} />
-                        <div className={styles["ML-search-badge"]}></div>
+                        <div className={styles["search-badge"]}></div>
                     </div>
                     
                     {/* кнопка - новая закладка */}
                     <Button color="primary" style={ButtonStyle}
-                        onClick={() => {
-                            this.props.openModalAddLink();
-                        }}>
-                        {/* name */ this.props.elementNames.MyLinks.newBookmark}
+                        onClick={this.props.openModalAddLink}>
+                        {/* name */ language.MyLinks.newBookmark}
                     </Button>
                 </div>
                   
                 {/* контейнер закладок */}
-                <div className={styles["ML-container"]}>
+                <div className={styles["bookmarks-container"]}>
                     
-                    {/* тело закладки */}
-                    {this.state.isLinks && this.state.storage.map( item => (
-                        <div key={item.id}
-                            className={`${styles.link }
-                                ${!item.isVisible ? styles.hiddenLink : ""} 
-                                ${item.name.toLowerCase().indexOf( this.state.search.toLowerCase() ) === 0 &&
-                                    this.state.search ? styles["link-searched"] : ""}`}>
-                            
-                            {/* значок скрытой закладки */}
-                            {!item.isVisible && <div className={styles["hiddenLink-badge"]}
-                                title="Скрытая закладка">
-                                    <div className={styles["hiddenLink-badge-eye"]}></div>
-                            </div>}
-
-                            <img className={styles["link-icon" ]}
-                                alt="*"
-                                src={'https://plus.google.com/_/favicon?domain_url=' + item.URL} />
-                            
-                            <span className={styles["link-name"]} onClick={ () => window.open( item.URL ) }> 
-                                {item.name}
-                            </span>
-
-                            <span className={styles["link-URL"]} onClick={ () => window.open( item.URL ) }> 
-                                {item.URL}
-                            </span>
-                          
-                            {/* button of call dropdown */}
-                            <button className={styles["link-button-dropdown"]}
-                                onClick={ (e) => {
-                                    let coords = e.target.getBoundingClientRect();
-                                    this.setState({ dropdown: {
+                    {this.state.isLinks && this.state.storage.map(item => (
+                        <Bookmark key={item.id}
+                            data={item} 
+                            search={this.state.search}
+                            openDropdown={(e) => {
+                                const coords = e.target.getBoundingClientRect();
+                                this.setState({ 
+                                    dropdown: {
                                         isVisible: true, 
                                         link: item,
                                         style: {
-                                            left: coords.x + coords.width - 170,
-                                            top: coords.y + 26
+                                            left: coords.x + coords.width - 140/*ширина меню*/,
+                                            top: coords.y + 26/*высота кнопки*/
                                         }
-                                    } })
-                                }}>
-                            </button>
-
-                        </div>
-                    ) )}
+                                    } 
+                                });
+                            }} 
+                        />
+                    ))}
 
                     {this.state.isLinks === undefined && <div className={styles.loading}></div>}
 
                     {this.state.isLinks === false && <span className={styles.notLinks}>
-                        {/* value */ this.props.elementNames.MyLinks.messageNotBookmarks}
+                        {/* value */ language.MyLinks.messageNotBookmarks}
                     </span>}
 
                 </div>
@@ -197,75 +161,133 @@ class MyLinks extends React.Component {
                 {/* dropdown menu */}
                 {this.state.dropdown.isVisible && <Dropdown style={this.state.dropdown.style}
                     close={this.closeDropdown}>
-                    <MenuItem image={img_open}
-                        onClick={() => window.open( this.state.dropdown.link.URL )}>
-                        {/* name */ this.props.elementNames.MyLinks.dropdown.open}
-                    </MenuItem>
-
-                    <MenuItem image={img_open_new_window}
+                    <MenuItem image={imgOpen}
                         onClick={() => {
-                            window.open( this.state.dropdown.link.URL, "new window", "left=0,top=0,width=600,height=400" )
+                            window.open(this.state.dropdown.link.URL);
                         }}>
-                        {/* name */ this.props.elementNames.MyLinks.dropdown.openInNewWindow}
+                        {/* name */ language.MyLinks.dropdown.open}
                     </MenuItem>
 
-                    <MenuItem image={img_copy}
-                        onClick={() => this.copyToClipboard( this.state.dropdown.link.URL )}>
-                        {/* name */ this.props.elementNames.MyLinks.dropdown.copy}
+                    <MenuItem image={imgOpenNewWindow}
+                        onClick={() => {
+                            window.open(
+                                this.state.dropdown.link.URL, 
+                                "new window", 
+                                "left=0,top=0,width=600,height=400"
+                            );
+                        }}>
+                        {/* name */ language.MyLinks.dropdown.inNewWindow}
                     </MenuItem>
 
-                    <MenuItem image={img_edit}
+                    <MenuItem image={imgCopy}
+                        onClick={() => {
+                            this.copyToClipboard(this.state.dropdown.link.URL);
+                        }}>
+                        {/* name */ language.MyLinks.dropdown.copy}
+                    </MenuItem>
+
+                    <MenuItem image={imgEdit}
                         onClick={() => {
                             this.setState({ linkData: this.state.dropdown.link });
                             this.props.openModalChangeLink();
                         }}>
-                        {/* name */ this.props.elementNames.MyLinks.dropdown.edit}
+                        {/* name */ language.MyLinks.dropdown.edit}
                     </MenuItem>
 
-                    <MenuItem image={img_delete}
-                        onClick={() => this.deleteLink( this.state.dropdown.link.id, this.props.user.id ) }>
-                        {/* name */ this.props.elementNames.MyLinks.dropdown.remove}
-                    </MenuItem>
-
-                    <MenuItem image={img_cancel}
-                        onClick={this.closeDropdown}>
-                        {/* name */ this.props.elementNames.MyLinks.dropdown.cancel}
+                    <MenuItem image={imgDelete}
+                        onClick={() => {
+                            this.deleteLink(this.state.dropdown.link.id);
+                        }}>
+                        {/* name */ language.MyLinks.dropdown.remove}
                     </MenuItem>
                 </Dropdown>}
 
                 {this.props.modal.AddLink && <Modal 
+                    showMessage={this.props.showMessage}
                     updateList={this.createList}
-                    header={this.props.elementNames.Modals.AddLinkHeader}
-                    firstInput={{ placeholder: this.props.elementNames.Modals.placeholderLinkName }}
-                    secondInput={{ placeholder: this.props.elementNames.Modals.placeholderLinkURL }}
+                    header={language.Modals.AddLinkHeader}
+                    inputFields={[
+                        { name: language.Modals.placeholderLinkName },
+                        { name: "URL" }
+                    ]}
                     checkbox
-                    primaryButton={this.props.elementNames.Modals.buttonAdd}
+                    actionButton={language.Modals.buttonAdd}
                     action={"addLink"}
                 />}
 
                 {this.props.modal.ChangeLink && <Modal 
+                    showMessage={this.props.showMessage}
                     updateList={this.createList}
                     linkData={this.state.linkData}
-                    header={this.props.elementNames.Modals.ChangeLinkHeader}
-                    firstInput={{ placeholder: this.props.elementNames.Modals.placeholderLinkName }}
-                    secondInput={{ placeholder: this.props.elementNames.Modals.placeholderLinkURL }}
+                    header={language.Modals.ChangeLinkHeader}
+                    inputFields={[
+                        { name: language.Modals.placeholderLinkName },
+                        { name: "URL" }
+                    ]}
                     checkbox
-                    primaryButton={this.props.elementNames.Modals.buttonSave}
+                    actionButton={language.Modals.buttonSave}
                     action={"changeLink"}
                 />}
 
-                {this.props.modal.ShowHiddenLinks && <Modal 
+                {this.props.modal.ShowHiddenLinks && <Modal
+                    showMessage={this.props.showMessage}
                     updateList={this.createList}
-                    text={this.props.elementNames.Modals.ShowHiddenText}
-                    firstInput
-                    primaryButton={this.props.elementNames.Modals.buttonOk}
-                    action={"showHiddens"}
+                    header={this.props.appData.user.show === "visible" ? language.Modals.ShowSecretLinksHeader : 
+                            this.props.appData.user.show === "all" ? language.Modals.HideSecretLinksHeader : ""}
+                    text={language.Modals.ShowHiddenText}
+                    inputFields={[{ 
+                        type: "password",
+                        maxLength: 4
+                    }]}
+                    actionButton="OK"
+                    action={"showHiddenLinks"}
+                />}
+
+                {this.props.modal.DeleteUser && <Modal
+                    showMessage={this.props.showMessage}
+                    exit={this.props.exit}
+                    header={language.Modals.DeleteUserHeader}
+                    text={language.Modals.DeleteUserText}
+                    inputFields={[]}
+                    actionButton={language.Modals.buttonRemove}
+                    action={"deleteUser"}
+                />}
+
+                {this.props.modal.ChangePassword && <Modal
+                    showMessage={this.props.showMessage}
+                    header={language.Modals.ChangePasswordHeader}
+                    inputFields={[{ 
+                        name: language.Modals.placeholderPassword,
+                        type: "password",
+                        maxLength: 20
+                    }, { 
+                        name: language.Modals.placeholderNewPassword,
+                        type: "password",
+                        maxLength: 20 
+                    }]}
+                    actionButton={language.Modals.buttonSave}
+                    action={"changePassword"}
+                />}
+
+                {this.props.modal.ChangePIN && <Modal 
+                    showMessage={this.props.showMessage}
+                    header={language.Modals.ChangePINcodeHeader}
+                    inputFields={[{ 
+                        name: language.Modals.placeholderPassword,
+                        type: "password",
+                        maxLength: 20
+                    }, { 
+                        name: language.Modals.placeholderNewPINcode,
+                        type: "password",
+                        maxLength: 4
+                    }]}
+                    actionButton={language.Modals.buttonSave}
+                    action={"changePIN"}
                 />}
               
             </div>
-        )
+        );
     }
-  
 }
   
 export default MyLinks;  
