@@ -1,7 +1,8 @@
 import React from 'react';
 import styles from './UserMenu.css';
+import { language, translate } from '../language/index';
 
-import img_user_settings from './images/img_user_settings.png';
+import imgUserSettings from './images/img_user_settings.png';
 
 class UserMenu extends React.Component {
     constructor(props) {
@@ -10,64 +11,66 @@ class UserMenu extends React.Component {
         this.state = {
             UserMenu: false,
             changeLang: false
-        }
+        };
     }
 
     componentDidMount() {
-        setTimeout( () => this.setState({ UserMenu: true }), 0 )
+        setTimeout(() => this.setState({ UserMenu: true }), 0);
     }
 
     closeMenu() {
         this.setState({ UserMenu: false });
-        setTimeout( this.props.closeUserMenu, 200 );
+        setTimeout(this.props.closeUserMenu, 200);
     }
     
     render() {
         return (
-            <div className={ `${styles.backdrop} ${this.state.UserMenu ? styles["open-backdrop"] : ""}` }
+            <div className={`${styles.backdrop} 
+                ${this.state.UserMenu ? styles["open-backdrop"] : ""}`}
                 id="backdrop"
-                onClick={ (e) => {
-                    if( e.target.id === "backdrop" ) {
+                onClick={(e) => {
+                    if (e.target.id === "backdrop") {
                         this.closeMenu();
                     }
-                } }>
+                }
+            }>
 
                 <div className={ `${styles.UserMenu} ${this.state.UserMenu ? styles["open-UserMenu"] : ""}` }>
                     {/*========== З А Г О Л О В О К ===========*/}
                     <span className={`${styles["menu-item"]} ${styles.disabled}`}>
                         <img className={styles["menu-item-icon"]}
                             alt="*"
-                            src={img_user_settings} />
-                        {/* name */ this.props.elementNames.UserMenu.header}
+                            src={imgUserSettings} />
+                        {/* name */ language.UserMenu.header}
                     </span>
 
                     <hr color="#AAA" width="90%" size="1" align="center" />
 
                     {/*========== ИЗМЕНИТЬ ПАРОЛЬ ===========*/}
                     <span className={styles["menu-item"]}
-                        onClick={ () => {
+                        onClick={() => {
                             this.closeMenu();
                             this.props.openModalChangePassword();
-                        } }>
-                        {/* name */ this.props.elementNames.UserMenu.changePass}
+                        }}>
+                        {/* name */ language.UserMenu.changePass}
                     </span>
 
                     {/*========== ИЗМЕНИТЬ ПИН-КОД ===========*/}
                     <span className={styles["menu-item"]}
-                        onClick={ () => {
+                        onClick={() => {
                             this.closeMenu();
                             this.props.openModalChangePINcode();
-                        } }>
-                        {/* name */ this.props.elementNames.UserMenu.changePIN}
+                        }}>
+                        {/* name */ language.UserMenu.changePIN}
                     </span>
                     
                     {/*========== УДАЛИТЬ ПРОФИЛЬ ===========*/}
                     <span className={styles["menu-item"]}
-                        onClick={ () => {
+                        onClick={() => {
                             this.closeMenu();
                             this.props.openModalDeleteUser();
-                        } }>
-                        {/* name */ this.props.elementNames.UserMenu.delProfile}
+                        }}>
+                        {/* name */ language.UserMenu.delProfile}
                     </span>
 
                     <hr color="#AAA" width="90%" size="1" align="center" />
@@ -79,29 +82,31 @@ class UserMenu extends React.Component {
                             flexDirection: "row",
                             alignItems: "center",
                             border: "none"
-                         }}
-                        onClick={() => {
-                            this.setState({ changeLang: !this.state.changeLang ? true : false })
                         }}
-                        onBlur={() => this.setState({ changeLang: false })}>
+                        onClick={() => {
+                            this.setState({ changeLang: !this.state.changeLang });
+                        }}
+                        onBlur={() => {
+                            this.setState({ changeLang: false });
+                        }}>
 
                         <div className={styles["arrow-icon"]}></div>
-                        {/* name */ this.props.elementNames.UserMenu.lang.itemName}
+                        {/* name */ language.UserMenu.language}
 
                         {this.state.changeLang && <div className={styles["language-switch"]}>
                             <span className={styles["menu-item"]}
-                                onClick={ () => {
-                                    this.props.setLanguage({ lang: "rus" });
-                                    localStorage.setItem("lang", "rus");
-                                } }>
-                                {/* name */ this.props.elementNames.UserMenu.lang.rus}
+                                onClick={() => {
+                                    translate("rus");
+                                    this.props.setAppData({ lang: "rus" });
+                                }}>
+                                Русский
                             </span>
                             <span className={styles["menu-item"]}
-                                onClick={ () => {
-                                    this.props.setLanguage({ lang: "eng" });
-                                    localStorage.setItem("lang", "eng");
-                                } }>
-                                {/* name */ this.props.elementNames.UserMenu.lang.eng}
+                                onClick={() => {
+                                    translate("eng");
+                                    this.props.setAppData({ lang: "eng" });
+                                }}>
+                                English
                             </span>
                         </div>}
                     </button>
@@ -112,20 +117,18 @@ class UserMenu extends React.Component {
                     <span className={styles["menu-item"]}
                         onClick={() => {
                             this.setState({ UserMenu: false });
-                            setTimeout( () => {
+                            setTimeout(() => {
                                 this.props.exit();
                                 this.closeMenu();
-                            }, 200 )
+                            }, 200);
                         }}>
-                        {/* name */ this.props.elementNames.UserMenu.exit}
+                        {/* name */ language.UserMenu.exit}
                     </span>
                   
                 </div>
             </div>
-        )
+        );
     }
-  
 }
   
 export default UserMenu;
-  
