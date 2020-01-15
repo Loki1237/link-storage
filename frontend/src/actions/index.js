@@ -1,48 +1,37 @@
-export const setLanguage = ownProps => ({
-    type: "SET_LANGUAGE",
-    lang: ownProps.lang
-})
+export const SetAppData = ownProps => ({
+    type: "SET_APP_DATA",
+    lang: ownProps.lang,
+    user: ownProps.user
+});
 
-export const authorization = ownProps => ({
-    type: "AUTHORIZATION",
-    data: ownProps.data
-})
-
-export const openUserMenu = {
+export const OpenUserMenu = {
     type: "OPEN_USER_MENU"
-}
+};
 
-export const closeUserMenu = {
+export const CloseUserMenu = {
     type: "CLOSE_USER_MENU"
-}
+};
 
-export const openAddLink = {
+export const OpenAddLink = {
     type: "OPEN_ADD_LINK"
-}
+};
 
-export const openChangeLink = {
+export const OpenChangeLink = {
     type: "OPEN_CHANGE_LINK"
-}
+};
 
-export const openShowHiddenLinks = {
+export const OpenShowHiddenLinks = {
     type: "OPEN_SHOW_HIDDEN_LINKS"
-}
+};
 
-export const openChangePassword = {
+export const OpenChangePassword = {
     type: "OPEN_CHANGE_PASSWORD"
-}
+};
 
-export const openChangePINcode = {
+export const OpenChangePINcode = {
     type: "OPEN_CHANGE_PIN_CODE"
-}
+};
 
-export const openDeleteUser = {
+export const OpenDeleteUser = {
     type: "OPEN_DELETE_USER"
-}
-
-export const showMessage = ownProps => ({
-    type: "SHOW_MESSAGE",
-    text: ownProps.text,
-    color: ownProps.color,
-    lifeTime: new Date().getTime() + 2000
-})
+};
