@@ -1,15 +1,16 @@
 import React from 'react';
 import styles from './Bookmark.css';
+import { language } from '../../language/index';
 
 function Bookmark(props) {
-    return(
-        <div className={`${styles.Bookmark }
+    return (
+        <div className={`${styles.Bookmark}
             ${!props.data.isVisible ? styles.hidden : ""} 
-            ${props.data.name.toLowerCase().indexOf( props.search.toLowerCase() ) === 0 && props.search 
+            ${props.data.name.toLowerCase().indexOf(props.search.toLowerCase()) === 0 && props.search 
                 ? styles.searched : ""}`}>
 
             {!props.data.isVisible && <div className={styles["hidden-badge"]}
-                title="Скрытая закладка">
+                title={language.MyLinks.title}>
                 <div className={styles["hidden-badge-eye"]}></div>
             </div>}
 
