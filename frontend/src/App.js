@@ -4,7 +4,7 @@ import history from './history';
 import styles from './App.css';
 
 import { connect } from 'react-redux';
-import { setAppData } from './actions/index';
+import { SetAppData } from './actions/index';
 import { translate } from './language/index';
 
 import NavBar from './containers/NavBar';
@@ -154,7 +154,7 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
     return {
-        setAppData: (ownProps) => dispatch(setAppData(ownProps)),
+        setAppData: (ownProps) => dispatch(SetAppData(ownProps)),
         exit: () => {
             dispatch({
                 type: "EXIT"
