@@ -95,6 +95,7 @@
     margin: 0 8px;
 }
 .name {
+    max-width: 160px;
     flex-shrink: 0;
     height: inherit;
     box-sizing: border-box;
@@ -132,7 +133,8 @@
     background: #EEE;
     outline: none;
     transition: 0.1s;
-    position: relative;
+    position: absolute;
+    right: 0;
 }
 .button-dropdown:before {
     content: "";
