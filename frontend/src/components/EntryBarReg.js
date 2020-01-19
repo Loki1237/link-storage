@@ -14,8 +14,6 @@ const ButtonStyle = {
 class EntryBarReg extends React.Component {
     constructor(props) {
         super(props);
-        this.confirmRegistration = this.confirmRegistration.bind(this);
-        this.registration = this.registration.bind(this);
         this.state = {
             showPassword: false,
             name: "",
@@ -80,7 +78,7 @@ class EntryBarReg extends React.Component {
         return true;
     }
 
-    confirmRegistration() {
+    confirmRegistration = () => {
         // Подсветка пустого текстового поля
         if (!this.state.name) {
             this.highlighting("name");
@@ -195,7 +193,7 @@ class EntryBarReg extends React.Component {
         }
     }
 
-    registration() {
+    registration = () => {
         fetch('/api/users', {
             method: 'POST',
             headers: {

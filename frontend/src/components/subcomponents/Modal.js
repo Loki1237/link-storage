@@ -16,8 +16,6 @@ const ButtonStyle = {
 class Modal extends React.Component {
     constructor(props) {
         super(props);
-        this.updateUserData = this.updateUserData.bind(this);
-        this.action = this.action.bind(this);
         this.state = {
             Modal: false,
             firstInput: "",
@@ -217,7 +215,7 @@ class Modal extends React.Component {
         });
     }
 
-    updateUserData() {
+    updateUserData = () => {
         const token = localStorage.getItem('token');
         fetch(`/api/users/token/${token}`)
             .then(res => res.json())
@@ -226,7 +224,7 @@ class Modal extends React.Component {
             });
     }
 
-    action() {
+    action = () => {
         switch (this.props.action) {
             case "addLink":
                 this.addLink();

@@ -24,8 +24,6 @@ const ButtonStyle = {
 class MyLinks extends React.Component {
     constructor(props) {
         super(props);
-        this.createList = this.createList.bind(this);
-        this.closeDropdown = this.closeDropdown.bind(this);
         this.state = {
             storage: [],
             isLinks: undefined,
@@ -48,7 +46,7 @@ class MyLinks extends React.Component {
         }, 500);
     }
 
-    createList() {
+    createList = () => {
         fetch(`/api/links/${this.props.appData.user.id}`)
             .then(res => res.json())
             .then(links => {
@@ -84,10 +82,11 @@ class MyLinks extends React.Component {
         });
     }
 
-    closeDropdown() {
+    closeDropdown = () => {
         this.setState({ 
             dropdown: { 
-                id: "", 
+                isVisible: false,
+                link: {},
                 style: {
                     left: 0,
                     top: 0

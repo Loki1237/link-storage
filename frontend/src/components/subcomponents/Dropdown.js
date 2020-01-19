@@ -4,7 +4,6 @@ import styles from './Dropdown.css';
 class Dropdown extends React.Component {
     constructor(props) {
         super(props);
-        this.closeMenu = this.closeMenu.bind(this);
         this.state = {
             Dropdown: false
         };
@@ -12,9 +11,14 @@ class Dropdown extends React.Component {
 
     componentDidMount() {
         setTimeout(() => this.setState({ Dropdown: true }), 0);
+        window.addEventListener("resize", this.closeMenu);
     }
 
-    closeMenu() {
+    componentWillUnmount() {
+        window.removeEventListener("resize", this.closeMenu);
+    }
+
+    closeMenu = () => {
         this.setState({ Dropdown: false });
         setTimeout(this.props.close, 100);
     }

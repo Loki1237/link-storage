@@ -7,7 +7,6 @@ import imgUserSettings from './images/img_user_settings.png';
 class UserMenu extends React.Component {
     constructor(props) {
         super(props);
-        this.closeMenu = this.closeMenu.bind(this);
         this.state = {
             UserMenu: false,
             changeLang: false
@@ -18,7 +17,7 @@ class UserMenu extends React.Component {
         setTimeout(() => this.setState({ UserMenu: true }), 0);
     }
 
-    closeMenu() {
+    closeMenu = () => {
         this.setState({ UserMenu: false });
         setTimeout(this.props.closeUserMenu, 200);
     }

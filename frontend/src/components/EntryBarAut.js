@@ -14,7 +14,6 @@ const ButtonStyle = {
 class EntryBarAut extends React.Component {
     constructor(props) {
         super(props);
-        this.entry = this.entry.bind(this);
         this.state = {
             showPassword: false,
             login: "",
@@ -33,7 +32,7 @@ class EntryBarAut extends React.Component {
         }, 400);
     }
 
-    entry() {
+    entry = () => {
         // Подсветка пустого текстового поля
         if (!this.state.login) {
             this.highlighting("login");
