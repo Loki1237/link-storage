@@ -1,0 +1,95 @@
+.Bookmarks {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    width: 620px;
+    min-width: 420px;
+    height: 100%;
+    border-left: solid 1px #CCC;
+    border-right: solid 1px #CCC;
+    background: #FFF;
+    box-sizing: border-box;
+    margin: 0 auto;
+    position: relative;
+    animation: MyLinksAnimation 0.25s 1 linear;
+}
+
+@keyframes MyLinksAnimation {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+.bookmark_container {
+    width: 100%;
+    height: 100%;
+    box-sizing: border-box;
+    padding: 8px 0 160px 0;
+    position: relative;
+    overflow-y: scroll;
+}
+
+.control_bar {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: nowrap;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 10px 5%;
+    border-bottom: solid 1px #CCC;
+}
+
+.large_screen_add_button {
+    display: inline-block;
+}
+
+.small_screen_add_button {
+    display: none;
+}
+
+@media (max-width: 620px) {
+    .Bookmarks {
+        width: 100%;
+    }
+}
+@media (max-width: 540px) {
+    .Bookmarks {
+        width: 100%;
+    }
+    .large_screen_add_button {
+        display: none;
+    }
+    .small_screen_add_button {
+        display: inline-block;
+    }
+}
+
+.loading {
+    height: 55px;
+    width: 55px;
+    border-left: solid 6px #777;
+    border-right: solid 6px #777;
+    border-top: solid 6px transparent;
+    border-bottom: solid 6px transparent;
+    border-radius: 50%;
+    position: absolute;
+    margin: auto;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    animation: spin-loading infinite 1s linear;
+}
+@keyframes spin-loading {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}

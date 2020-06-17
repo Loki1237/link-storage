@@ -1,9 +1,14 @@
 .body-app {
     overflow: hidden;
     width: 100%;
-    height: calc(100% - 35px);
+    height: 100%;
     background: #EEE;
     position: fixed;
     left: 0;
-    top: 35px;
+    top: 0;
+}
+
+.Toolbar {
+    display: flex;
+    justify-content: space-between;
 }

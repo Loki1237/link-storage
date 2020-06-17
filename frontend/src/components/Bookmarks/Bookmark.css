@@ -1,0 +1,83 @@
+.Bookmark {
+    display: flex;
+    align-items: center;
+    width: 90%;
+    box-sizing: border-box;
+    position: relative;
+    margin: 10px auto;
+    padding: 0 2px;
+    background: #F4F4F4;
+    border-radius: 3px;
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.5);
+    cursor: default;
+}
+.searched::before {
+    content: "";
+    width: 4px;
+    height: 100%;
+    position: absolute;
+    left: -12px;
+    background: #777;
+    animation: searched-flashing 1s infinite linear;
+}
+@keyframes searched-flashing {
+    0% {
+        background: #777;
+    }
+    50% {
+        background: #FFF;
+    }
+    100% {
+        background: #777;
+    }
+}
+
+.icon {
+    height: 16px;
+    width: 16px;
+    margin: 0 8px;
+    transition: 0.1s linear;
+}
+
+.content {
+    flex-grow: 1;
+    padding: 6px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    transition: 0.1s linear;
+}
+.name {
+    margin: 0;
+    margin-bottom: 2px;
+    font: 400 16px Roboto, arial, sans-serif;
+    color: #444;
+}
+.URL {
+    font: 400 14px Roboto, arial, sans-serif;
+    color: #26A;
+    text-decoration: none;
+}
+.URL:hover {
+    color: #48C;
+    text-decoration: underline;
+}
+.URL:active {
+    color: #048;
+}
+
+.hidden {
+    box-shadow: none;
+    background: transparent;
+    transition: 0.1s linear;
+}
+.hidden .content, .hidden .icon {
+    opacity: 0.4;
+}
+.hidden:hover {
+    background: #F4F4F4;
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.5);
+}
+.hidden:hover .content, .hidden:hover .icon {
+    opacity: 1;
+}
