@@ -34,14 +34,15 @@ module.exports = {
                 ]
             },
             {
-                test: /\.png$/,
+                test: /\.(png|woff|woff2)$/,
                 loader: 'file-loader'
             }
         ]
     },
     plugins: [
         new HtmlWebpackPlugin({
-            template: './public/index.html'
+            template: './public/index.html',
+            favicon: './public/favicon.png'
         })
     ]
 }
