@@ -1,10 +1,8 @@
 import { combineReducers } from 'redux';
-import UserMenuReducer from './UserMenuReducer';
-import modalsReducer from './modalsReducer';
-import appDataReducer from './appDataReducer';
+import authReducer from './authReducer';
+import linkReducer from './linkReducer';
 
-export const reducers = combineReducers({
-    UserMenu: UserMenuReducer,
-    modal: modalsReducer,
-    appData: appDataReducer
+export default combineReducers({
+    auth: authReducer,
+    links: linkReducer
 });
