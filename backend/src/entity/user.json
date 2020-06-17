@@ -18,8 +18,8 @@
         "PIN": {
             "type": "text"
         },
-        "show": {
-            "type": "text"
+        "showHidden": {
+            "type": "boolean"
         }
     }
 }
