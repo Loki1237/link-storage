@@ -1,43 +1,98 @@
 const express = require('express');
-const router = express.Router();
-const typeorm = require('typeorm');
+const { getRepository } = require('typeorm');
+const verifyAuthToken = require('../middleware/verify-auth-token');
 
-typeorm.createConnection().then(connection => {
-    const linkRepository = connection.getRepository("Links");
-    const userRepository = connection.getRepository("Users");
+const getLinks = async (req, res) => {
+    const decodedAuthToken = await verifyAuthToken(req.cookies.AUTH_TOKEN);
 
-    router.get('/:userID', async function(req, res) {
-        const user = await userRepository.findOne({ id: req.params.userID });
+    if (!decodedAuthToken) {
+        return res.status(401).send();
+    }
 
-        const allLinks = await linkRepository.find({ userID: req.params.userID });
-        const visibleLinks = allLinks.filter(item => item.isVisible);
+    const userRepository = getRepository("Users");
+    const user = await userRepository.findOne({ id: decodedAuthToken.id });
 
-        res.json(user.show === "all" ? allLinks : visibleLinks);
+    if (!user) {
+        return res.status(401).send();
+    }
+
+    const options = {
+        userID: user.id,
+        isVisible: true
+    };
+
+    if (user.showHidden) {
+        delete options.isVisible;
+    }
+
+    const linkRepository = getRepository("Links");
+    const links = await linkRepository.find({ 
+        where: options,
+        order: {
+            id: "DESC"
+        }
     });
 
-    router.post('/', async function(req, res) {
-        const link = await linkRepository.create(req.body);
-        await linkRepository.save(link);
-        return res.sendStatus(200);
+    return res.status(200).json({ links, show: user.showHidden ? "all" : "visible" }).end();
+}
+
+const createLink = async (req, res) => {
+    const decodedAuthToken = await verifyAuthToken(req.cookies.AUTH_TOKEN);
+
+    if (!decodedAuthToken) {
+        return res.status(401).send();
+    }
+
+    const linkRepository = getRepository("Links");
+    const link = await linkRepository.create({
+        name: req.body.name,
+        URL: req.body.URL,
+        userID: decodedAuthToken.id,
+        isVisible: req.body.isVisible
     });
+    await linkRepository.save(link);
 
-    router.put('/:id', async function(req, res) {
-        const link = await linkRepository.findOne({ id: req.params.id });
-        await linkRepository.merge(link, req.body);
-        await linkRepository.save(link);
-        return res.sendStatus(200);
-    });
+    return res.status(200).send();
+}
 
-    router.delete('/:id', async function(req, res) {
-        await linkRepository.delete({ id: req.params.id });
-        return res.sendStatus(200);
-    });
+const changeLink = async (req, res) => {
+    const decodedAuthToken = await verifyAuthToken(req.cookies.AUTH_TOKEN);
 
-    router.delete('/all/:userID', async function(req, res) {
-        await linkRepository.delete({ userID: req.params.userID });
-        return res.sendStatus(200);
-    });
+    if (!decodedAuthToken) {
+        return res.status(401).send();
+    }
 
-});
+    const linkRepository = getRepository("Links");
+    const link = await linkRepository.findOne({ id: +req.params.id, userID: decodedAuthToken.id });
 
-module.exports = router;
+    await linkRepository.merge(link, req.body);
+    await linkRepository.save(link);
+
+    return res.status(200).send();
+}
+
+const deleteLink = async (req, res) => {
+    const decodedAuthToken = await verifyAuthToken(req.cookies.AUTH_TOKEN);
+
+    if (!decodedAuthToken) {
+        return res.status(401).send();
+    }
+
+    const linkRepository = getRepository("Links");
+    await linkRepository.delete({ id: +req.params.id, userID: decodedAuthToken.id });
+
+    return res.status(200).send();
+}
+
+const linkRouter = () => {
+    const router = express.Router();
+
+    router.get('/', getLinks);
+    router.post('/', createLink);
+    router.put('/:id', changeLink);
+    router.delete('/:id', deleteLink);
+
+    return router;
+}
+
+module.exports = linkRouter;
