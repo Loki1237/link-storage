@@ -1,3 +1,3 @@
-Links Storage
+Link Storage
 
-Alternative storage for bookmarks
+Bookmark storage with authorization
